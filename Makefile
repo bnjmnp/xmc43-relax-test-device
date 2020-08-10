@@ -7,7 +7,7 @@ VARIANT = F100x256
 EC_SII = sii_eeprom.bin
 
 XMC_LIB = ./XMC_Peripheral_Library
-SOES_DIR = ../../soes
+SOES_DIR = ./SOES/soes
 
 
 SRC = \
@@ -25,7 +25,7 @@ SRC = \
 	$(XMC_LIB)/XMCLib/src/xmc_ecat.c \
 	$(XMC_LIB)/XMCLib/src/xmc4_flash.c \
 	$(XMC_LIB)/XMCLib/src/xmc_fce.c \
-	$(XMC_LIB)/Newlib/syscalls.c \
+	$(XMC_LIB)/ThirdPartyLibraries/Newlib/syscalls.c \
 	$(XMC_LIB)/CMSIS/Infineon/XMC4300_series/Source/system_XMC4300.c \
 
 ASRC = \
