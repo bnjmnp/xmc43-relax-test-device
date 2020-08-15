@@ -17,6 +17,7 @@ SRC = \
 	$(SOES_DIR)/esc.c \
 	$(SOES_DIR)/esc_coe.c \
 	$(SOES_DIR)/esc_eep.c \
+	$(SOES_DIR)/esc_foe.c \
 	$(SOES_DIR)/hal/xmc4/esc_hw.c \
 	$(SOES_DIR)/hal/xmc4/esc_hw_eep.c \
 	$(XMC_LIB)/XMCLib/src/xmc_gpio.c \

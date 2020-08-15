@@ -4,8 +4,12 @@
  */
 
 #include "ecat_slv.h"
+#include "esc_foe.h"
 #include "utypes.h"
 #include "xmc_gpio.h"
+
+#include <string.h>
+#include <stdio.h>
 
 #ifdef XMC4800_F144x2048
 #define P_LED  P5_8
@@ -17,7 +21,12 @@
 #define P_BTN  P3_4
 #endif
 
+#define FLASH_WRITE_BLOCK_SIZE 8192
+#define DUMMY_FLASH_SIZE FLASH_WRITE_BLOCK_SIZE
+
 extern void ESC_eep_handler(void);
+void foe_init(void);
+uint32_t foe_write_to_test_bin(foe_writefile_cfg_t * self, uint8_t * data, size_t length);
 
 /* Application variables */
 _Rbuffer    Rb;
@@ -29,6 +38,9 @@ uint8_t * txpdo = (uint8_t *)&Rb.button;
 
 uint32_t encoder_scale;
 uint32_t encoder_scale_mirror;
+
+
+static const uint32_t test_bin_dummy_flash = 0;
 
 static const XMC_GPIO_CONFIG_t gpio_config_btn = {
   .mode = XMC_GPIO_MODE_INPUT_INVERTED_PULL_UP,
@@ -61,7 +73,7 @@ void cb_set_outputs (void)
    }
 }
 
-void post_object_download_hook (uint16_t index, uint8_t subindex,
+uint32_t post_object_download_hook (uint16_t index, uint8_t subindex,
                                 uint16_t flags)
 {
    switch(index)
@@ -91,6 +103,7 @@ void post_object_download_hook (uint16_t index, uint8_t subindex,
          break;
       }
    }
+   return 0;
 }
 
 void soes (void * arg)
@@ -121,7 +134,8 @@ void soes (void * arg)
    XMC_GPIO_Init(P_BTN, &gpio_config_btn);
    XMC_GPIO_Init(P_LED, &gpio_config_led);
 
-   ecat_slv_init (&config);
+   ecat_slv_init(&config);
+   foe_init();
 
    while (1)
    {
@@ -133,4 +147,37 @@ int main (void)
 {
    soes (NULL);
    return 0;
+}
+
+
+void foe_init(void)
+{
+  static foe_writefile_cfg_t files[] =
+  {
+     {
+        .name               = "test.bin",
+        .max_data           = DUMMY_FLASH_SIZE,
+        .dest_start_address = (uint32_t)test_bin_dummy_flash,
+        .address_offset     = 0,
+        .filepass           = 0,
+        .write_function     = foe_write_to_test_bin   /* NULL if not used */
+     }
+  };
+
+  static uint8_t fbuf[FLASH_WRITE_BLOCK_SIZE];
+  static foe_cfg_t config =
+  {
+     .buffer_size = FLASH_WRITE_BLOCK_SIZE,  /* Buffer size before we flush to destination */
+     .fbuffer     = (uint8_t *)&fbuf,
+     .n_files     = 1,
+     .files       = files
+  };
+
+  FOE_config(&config, files);
+}
+
+
+uint32_t foe_write_to_test_bin(foe_writefile_cfg_t * self, uint8_t * data, size_t length)
+{
+  return 0;
 }

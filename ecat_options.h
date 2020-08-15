@@ -3,8 +3,10 @@
 
 #include "cc.h"
 
-#define USE_FOE          0
+#define USE_FOE          1
 #define USE_EOE          0
+
+#define FOE_READ_SUPPORTED
 
 #define MBXSIZE          128
 #define MBXSIZEBOOT      128
