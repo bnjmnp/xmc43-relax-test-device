@@ -113,7 +113,7 @@ void soes (void * arg)
    {
       .user_arg = NULL,
       .use_interrupt = 0,
-      .watchdog_cnt = 5000,
+      .watchdog_cnt = 50000,
       .set_defaults_hook = NULL,
       .pre_state_change_hook = NULL,
       .post_state_change_hook = NULL,
