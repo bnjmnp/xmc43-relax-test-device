@@ -26,7 +26,7 @@
 
 extern void ESC_eep_handler(void);
 void foe_init(void);
-uint32_t foe_write_to_test_bin(foe_writefile_cfg_t * self, uint8_t * data, size_t length);
+uint32_t foe_write_to_test_bin(foe_file_cfg_t * self, uint8_t * data, size_t length);
 
 /* Application variables */
 _Rbuffer    Rb;
@@ -150,9 +150,10 @@ int main (void)
 }
 
 
+
 void foe_init(void)
 {
-  static foe_writefile_cfg_t files[] =
+  static foe_file_cfg_t files[] =
   {
      {
         .name               = "test.bin",
@@ -173,11 +174,11 @@ void foe_init(void)
      .files       = files
   };
 
-  FOE_config(&config, files);
+  FOE_config(&config);
 }
 
 
-uint32_t foe_write_to_test_bin(foe_writefile_cfg_t * self, uint8_t * data, size_t length)
+uint32_t foe_write_to_test_bin(foe_file_cfg_t * self, uint8_t * data, size_t length)
 {
   return 0;
 }
