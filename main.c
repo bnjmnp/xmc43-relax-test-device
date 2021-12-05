@@ -38,6 +38,7 @@ uint8_t * txpdo = (uint8_t *)&Rb.button;
 
 uint32_t encoder_scale;
 uint32_t encoder_scale_mirror;
+bool throw_emergency = false;
 
 
 static const uint32_t test_bin_dummy_flash = 0;
@@ -97,6 +98,7 @@ uint32_t post_object_download_hook (uint16_t index, uint8_t subindex,
             case 0x01:
             {
                Cb.reset_counter = 0;
+               throw_emergency = true;
                break;
             }
          }
@@ -140,6 +142,14 @@ void soes (void * arg)
    while (1)
    {
       ecat_slv();
+      if (throw_emergency)
+      {
+        uint8_t data[5] = {0xAA, 0x55, 0x55, 0x55, 0x55};
+        if (!COE_throwEmergency(0xFFFE, 0x00, data))
+        {
+          throw_emergency = false;
+        }
+      }
    }
 }
 
