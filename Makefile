@@ -1,5 +1,6 @@
 
 TARGET = xmc4300-ecat-slave
+BUILD_DIR := ./.build
 
 DEVICE = XMC4300
 VARIANT = F100x256
@@ -42,20 +43,17 @@ JLINK_SPEED = 1000
 JLINK_IFACE = swd
 
 # Define all object files.
-OBJ = $(SRC:.c=.o) $(ASRC:.S=.o) $(BINS:.bin=.o) 
-
-# Define all listing files.
-LST = $(ASRC:.S=.lst) $(SRC:.c=.lst)
+OBJ = $(SRC:%=$(BUILD_DIR)/%.o) $(ASRC:%=$(BUILD_DIR)/%.o) $(BINS:%=$(BUILD_DIR)/%.o)
 
 # Define all dependency files.
-DEP = $(ASRC:.S=.d) $(SRC:.c=.d)
+DEP = $(OBJ:.o=.d)
 
 CPPFLAGS = -D$(DEVICE)_$(VARIANT)
-CPPFLAGS += -MMD -MP -MF $(@:.o=.d) -MT $(@)
+CPPFLAGS += -MMD -MP
 
-CPPFLAGS += -I./$(XMC_LIB)/XMCLib/inc
-CPPFLAGS += -I./$(XMC_LIB)/CMSIS/Include
-CPPFLAGS += -I./$(XMC_LIB)/CMSIS/Infineon/$(DEVICE)_series/Include
+CPPFLAGS += -I$(XMC_LIB)/XMCLib/inc
+CPPFLAGS += -I$(XMC_LIB)/CMSIS/Include
+CPPFLAGS += -I$(XMC_LIB)/CMSIS/Infineon/$(DEVICE)_series/Include
 CPPFLAGS += -I.
 CPPFLAGS += -I$(SOES_DIR)
 CPPFLAGS += -I$(SOES_DIR)/hal/xmc4
@@ -70,7 +68,7 @@ ASFLAGS = -x assembler-with-cpp $(CPPFLAGS) $(OBJFLAGS)
 
 LDFLAGS = -T$(LINKER_SCRIPT) -nostartfiles -Xlinker --gc-sections
 LDFLAGS += -specs=nano.specs -specs=nosys.specs
-LDFLAGS += -Wl,-Map,$(TARGET).map
+LDFLAGS += -Wl,-Map,$(BUILD_DIR)/$(TARGET).map
 LDFLAGS += $(ARCHFLAGS)
 
 # Define programs and commands.
@@ -96,56 +94,59 @@ MSG_OBJCOPY = ObjCopy:
 MSG_CLEANING = Cleaning project:
 
 # Default target.
-all: $(TARGET).hex size
+all: $(BUILD_DIR)/$(TARGET).hex size
 
 # Compile: create object files from C source files.
-%.o : %.c
+$(BUILD_DIR)/%.c.o : %.c
 	@echo
+	mkdir -p $(@D)
 	@echo $(MSG_COMPILING) $<
 	$(CC) -c $(CFLAGS) -o $@ $< 
 
 # Assemble: create object files from assembler source files.
-%.o : %.S
+$(BUILD_DIR)/%.S.o : %.S
 	@echo
+	mkdir -p $(@D)
 	@echo $(MSG_ASSEMBLING) $<
 	$(CC) -c $(ASFLAGS) -o $@ $<
 
 # ObjCopy: create object files from binary files.
-%.o : %.bin
+$(BUILD_DIR)/%.bin.o : %.bin
 	@echo
+	mkdir -p $(@D)
 	@echo $(MSG_OBJCOPY) $<
 	$(OBJCOPY) -I binary -O elf32-littlearm -B arm $< $@
 
 # Link: create ELF output file from object files.
-$(TARGET).elf: $(OBJ)
+$(BUILD_DIR)/$(TARGET).elf: $(OBJ)
 	@echo
 	@echo $(MSG_LINKING) $@
 	$(CC) $(LDFLAGS) -o $@ $(OBJ) 
 
 # Create final output file from ELF output file.
-$(TARGET).hex: $(TARGET).elf
+$(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
 	@echo
 	@echo $(MSG_FLASH_FILE) $@
 	$(OBJCOPY) -O ihex $< $@
 
 # Create extended listing file from ELF output file.
-$(TARGET).lss: $(TARGET).elf
+$(BUILD_DIR)/$(TARGET).lss: $(BUILD_DIR)/$(TARGET).elf
 	@echo
 	@echo $(MSG_EXTENDED_LISTING) $@
-	$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lss
+	$(OBJDUMP) -h -S $(BUILD_DIR)/$(TARGET).elf > $(BUILD_DIR)/$(TARGET).lss
 
 # Display size of file.
-size: $(TARGET).elf
+size: $(BUILD_DIR)/$(TARGET).elf
 	@echo
 	@echo $(MSG_SIZE)
-	$(SIZE) --format=berkeley $(TARGET).elf
+	$(SIZE) --format=berkeley $(BUILD_DIR)/$(TARGET).elf
 	@echo
 
 # Flash the target device.
-flash: $(TARGET).hex
+flash: $(BUILD_DIR)/$(TARGET).hex
 	@echo
 	@echo $(MSG_FLASH)
-	echo -e "device $(DEVICE)-$(VARIANT)\nspeed $(JLINK_SPEED)\nsi $(JLINK_IFACE)\nloadfile $(TARGET).hex\ng\nqc\n" | $(JLINK)
+	echo -e "device $(DEVICE)-$(VARIANT)\nspeed $(JLINK_SPEED)\nsi $(JLINK_IFACE)\nloadfile $(BUILD_DIR)/$(TARGET).hex\ng\nqc\n" | $(JLINK)
 
 # Erase the target flash
 erase:
@@ -157,13 +158,7 @@ erase:
 clean:
 	@echo
 	@echo $(MSG_CLEANING)
-	$(REMOVE) $(TARGET).map
-	$(REMOVE) $(TARGET).elf
-	$(REMOVE) $(TARGET).hex
-	$(REMOVE) $(TARGET).lss
-	$(REMOVE) $(OBJ)
-	$(REMOVE) $(LST)
-	$(REMOVE) $(DEP)
+	rm -r $(BUILD_DIR)
 
 # Include the dependency files.
 -include $(DEP)
