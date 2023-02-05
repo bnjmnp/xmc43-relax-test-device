@@ -1,0 +1,11 @@
+# Library directories
+XMC_Peripheral_Library
+
+# Build directory
+.build
+
+# IDE and editor project files
+.vscode
+.cproject
+.project
+.settings
