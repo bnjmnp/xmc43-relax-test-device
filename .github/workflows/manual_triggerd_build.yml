@@ -1,0 +1,30 @@
+
+name: Manual Trigger Build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+
+      - name: Compile C code with Make
+        run: |
+          make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact
+          path: |
+            .build/xmc4300-ecat-slave.elf
+            .build/xmc4300-ecat-slave.hex
+            .build/xmc4300-ecat-slave.map
