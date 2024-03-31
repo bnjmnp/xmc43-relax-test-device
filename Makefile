@@ -7,8 +7,9 @@ VARIANT = F100x256
 
 EC_SII = sii_eeprom.bin
 
-XMC_LIB = ./XMC_Peripheral_Library
+XMC_LIB = ./mtb-xmclib-cat3
 SOES_DIR = ./SOES/soes
+CMSIS_DIR = ./CMSIS_5
 
 
 SRC = \
@@ -27,16 +28,16 @@ SRC = \
 	$(XMC_LIB)/XMCLib/src/xmc_ecat.c \
 	$(XMC_LIB)/XMCLib/src/xmc4_flash.c \
 	$(XMC_LIB)/XMCLib/src/xmc_fce.c \
-	$(XMC_LIB)/ThirdPartyLibraries/Newlib/syscalls.c \
-	$(XMC_LIB)/CMSIS/Infineon/XMC4300_series/Source/system_XMC4300.c \
+	$(XMC_LIB)/Newlib/syscalls.c \
+	$(XMC_LIB)/CMSIS/Infineon/COMPONENT_XMC4300/Source/system_XMC4300.c \
 
 ASRC = \
-	$(XMC_LIB)/CMSIS/Infineon/XMC4300_series/Source/GCC/startup_XMC4300.S \
+	$(XMC_LIB)/CMSIS/Infineon/COMPONENT_XMC4300/Source/TOOLCHAIN_GCC_ARM/startup_XMC4300.S \
 
 BINS = \
 	$(EC_SII)\
 
-LINKER_SCRIPT = $(XMC_LIB)/CMSIS/Infineon/XMC4300_series/Source/GCC/XMC4300x256.ld
+LINKER_SCRIPT = $(XMC_LIB)/CMSIS/Infineon/COMPONENT_XMC4300/Source/TOOLCHAIN_GCC_ARM/XMC4300x256.ld
 
 # JLink options
 JLINK_SPEED = 1000
@@ -53,11 +54,12 @@ CPPFLAGS += -MMD -MP
 
 CPPFLAGS += -I$(XMC_LIB)/XMCLib/inc
 CPPFLAGS += -I$(XMC_LIB)/CMSIS/Include
-CPPFLAGS += -I$(XMC_LIB)/CMSIS/Infineon/$(DEVICE)_series/Include
+CPPFLAGS += -I$(XMC_LIB)/CMSIS/Infineon/COMPONENT_XMC4300/Include
 CPPFLAGS += -I.
 CPPFLAGS += -I$(SOES_DIR)
 CPPFLAGS += -I$(SOES_DIR)/hal/xmc4
 CPPFLAGS += -I$(SOES_DIR)/include/sys/gcc
+CPPFLAGS += -I$(CMSIS_DIR)/CMSIS/Core/Include
 
 ARCHFLAGS = -mfloat-abi=softfp -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mthumb
 
