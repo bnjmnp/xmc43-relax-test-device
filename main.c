@@ -17,6 +17,7 @@
 #endif
 
 #ifdef XMC4300_F100x256
+#define A_LED  P4_0
 #define P_LED  P4_1
 #define P_BTN  P3_4
 #endif
@@ -29,6 +30,8 @@ void foe_init(void);
 uint32_t foe_write_to_test_bin(foe_file_cfg_t * self, uint8_t * data, size_t length);
 
 /* Application variables */
+uint32_t volatile msTicks;
+
 _Rbuffer    Rb;
 _Wbuffer    Wb;
 _Cbuffer    Cb;
@@ -108,8 +111,15 @@ uint32_t post_object_download_hook (uint16_t index, uint8_t subindex,
    return 0;
 }
 
+
+void SysTick_Handler (void) {
+  msTicks++;
+}
+
 void soes (void * arg)
 {
+   SysTick_Config(SystemCoreClock/1000);
+
    /* Setup config hooks */
    static esc_cfg_t config =
    {
@@ -134,6 +144,7 @@ void soes (void * arg)
 
    // configure I/O
    XMC_GPIO_Init(P_BTN, &gpio_config_btn);
+   XMC_GPIO_Init(A_LED, &gpio_config_led);
    XMC_GPIO_Init(P_LED, &gpio_config_led);
 
    ecat_slv_init(&config);
@@ -149,6 +160,14 @@ void soes (void * arg)
         {
           throw_emergency = false;
         }
+      }
+      if ((msTicks & 1023) < 100)
+      {
+         XMC_GPIO_SetOutputHigh(A_LED);
+      }
+      else
+      {
+         XMC_GPIO_SetOutputLow(A_LED);
       }
    }
 }
