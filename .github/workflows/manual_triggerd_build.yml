@@ -23,7 +23,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
+          name: build-artifacts
           path: |
             .build/xmc4300-ecat-slave.elf
             .build/xmc4300-ecat-slave.hex
