@@ -155,7 +155,7 @@ void soes (void * arg)
       ecat_slv();
       if (throw_emergency)
       {
-        uint8_t data[5] = {0xAA, 0x55, 0x55, 0x55, 0x55};
+        uint8_t data[5] = {0xAA, 0x50, 0x51, 0x52, 0x53};
         if (!COE_throwEmergency(0xFFFE, 0x00, data))
         {
           throw_emergency = false;
