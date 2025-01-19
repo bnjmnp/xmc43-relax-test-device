@@ -53,9 +53,9 @@ static const char acName7100_02[] = "Encoder scale mirror";
 static const char acName8001[] = "Slave commands";
 static const char acName8001_01[] = "Reset counter";
 
-static char ac1008_00[] = "SOES test application";
-static char ac1009_00[] = "0.0.2";
-static char ac100A_00[] = "0.9.3";
+static char ac1008_00[] = "SOES test application"; /* Manufacturer Device Name */
+static char ac1009_00[] = "0.0.2";                 /* Manufacturer Hardware Version */
+static char ac100A_00[] = "0.9.4";                 /* Manufacturer Software Version */
 
 const _objd SDO1000[] = {
     {0x00, DTYPE_UNSIGNED32, 32, ATYPE_RO, &acName1000[0], 0x00000000, NULL},
