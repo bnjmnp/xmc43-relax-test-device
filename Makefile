@@ -80,7 +80,11 @@ CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 OBJDUMP = arm-none-eabi-objdump
 SIZE = arm-none-eabi-size
-JLINK = JLinkExe
+ifeq ($(OS),Windows_NT)
+	JLINK = JLink
+else
+	JLINK = JLinkExe
+endif
 
 # Define Messages
 # English
