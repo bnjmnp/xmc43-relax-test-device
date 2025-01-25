@@ -1,8 +1,5 @@
-# Library directories
-XMC_Peripheral_Library
-
 # Build directory
-.build
+build
 
 # IDE and editor project files
 .vscode

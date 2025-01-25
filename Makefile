@@ -1,6 +1,6 @@
 
 TARGET = xmc4300-ecat-subdevice
-BUILD_DIR := ./.build
+BUILD_DIR := ./build
 
 DEVICE = XMC4300
 VARIANT = F100x256
