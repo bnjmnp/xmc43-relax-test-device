@@ -25,6 +25,6 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            .build/xmc4300-ecat-slave.elf
-            .build/xmc4300-ecat-slave.hex
-            .build/xmc4300-ecat-slave.map
+            .build/xmc4300-ecat-subdevice.elf
+            .build/xmc4300-ecat-subdevice.hex
+            .build/xmc4300-ecat-subdevice.map

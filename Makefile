@@ -1,5 +1,5 @@
 
-TARGET = xmc4300-ecat-slave
+TARGET = xmc4300-ecat-subdevice
 BUILD_DIR := ./.build
 
 DEVICE = XMC4300
