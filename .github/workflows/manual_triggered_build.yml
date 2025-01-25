@@ -1,5 +1,5 @@
 
-name: Manual Trigger Build
+name: Manual Triggered Build
 
 on: workflow_dispatch
 
