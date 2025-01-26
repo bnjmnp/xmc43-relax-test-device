@@ -20,3 +20,12 @@ jobs:
       - name: Compile C code with Make
         run: |
           make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/xmc4300-ecat-subdevice.elf
+            build/xmc4300-ecat-subdevice.hex
+            build/xmc4300-ecat-subdevice.map
